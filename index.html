@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fragmentation Tracker</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        header {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0px 4px 10px rgba(255, 0, 255, 0.3);
+        }
+
+        select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+        }
+
+        select {
+            background: #222;
+            color: #fff;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff00ff, #ff9900);
+            color: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #ff9900, #ff00ff);
+            transform: scale(1.05);
+        }
+
+        #progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #222;
+            border-radius: 5px;
+            margin-top: 15px;
+            position: relative;
+        }
+
+        #progress {
+            width: 0%;
+            height: 100%;
+            background: #ff00ff;
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+
+        #time {
+            font-size: 1.5em;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>Fragmentation Tracker</header>
+
+    <div class="container">
+        <label>Select Fragmentation Type:</label>
+        <select id="fragmentation-type">
+            <option value="internal">Internal Fragmentation</option>
+            <option value="external">External Fragmentation</option>
+            <option value="disk">Disk Fragmentation</option>
+        </select>
+        <label>Select Time Interval:</label>
+        <select id="time-interval">
+            <option value="30">30 Seconds</option>
+            <option value="60">1 Minute</option>
+            <option value="300">5 Minutes</option>
+        </select>
+        <button id="start">Start</button>
+        <button id="stop" disabled>Stop</button>
+        <p id="time">00:00:00</p>
+        <div id="progress-bar">
+            <div id="progress"></div>
+        </div>
+    </div>
+
+    <script>
+        let timer;
+        let seconds = 0;
+        let interval;
+
+        document.getElementById("start").addEventListener("click", function() {
+            document.getElementById("start").disabled = true;
+            document.getElementById("stop").disabled = false;
+            
+            seconds = parseInt(document.getElementById("time-interval").value);
+            interval = seconds;
+            
+            timer = setInterval(function() {
+                if (seconds > 0) {
+                    seconds--;
+                    let min = Math.floor(seconds / 60);
+                    let sec = seconds % 60;
+                    document.getElementById("time").textContent = `${formatTime(min)}:${formatTime(sec)}`;
+                    document.getElementById("progress").style.width = `${((interval - seconds) / interval) * 100}%`;
+                } else {
+                    clearInterval(timer);
+                    document.getElementById("start").disabled = false;
+                    document.getElementById("stop").disabled = true;
+                }
+            }, 1000);
+        });
+
+        document.getElementById("stop").addEventListener("click", function() {
+            clearInterval(timer);
+            document.getElementById("start").disabled = false;
+            document.getElementById("stop").disabled = true;
+        });
+
+        function formatTime(unit) {
+            return unit < 10 ? '0' + unit : unit;
+        }
+    </script>
+</body>
+</html>
